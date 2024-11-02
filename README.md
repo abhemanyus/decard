@@ -1,7 +1,7 @@
 # Contact De-duper
 
 Usage:
-`dedupe duplicates.vcf deduped.vcf`
+`decard duplicates.vcf deduped.vcf`
 
 ## Notes:
 1. Matches against Full Name (FN) property
