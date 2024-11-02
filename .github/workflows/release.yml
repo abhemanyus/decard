@@ -106,14 +106,6 @@ jobs:
         if: "!matrix.skip_tests"
         run: ${{ env.CARGO }} test --release --locked --target ${{ matrix.target }} --workspace
 
-      - name: Set profile.release.strip = true
-        shell: bash
-        run: |
-          cat >> .cargo/config.toml <<EOF
-          [profile.release]
-          strip = true
-          EOF
-
       - name: Build release binary
         run: ${{ env.CARGO }} build --release --locked --target ${{ matrix.target }}
 
@@ -156,14 +148,10 @@ jobs:
               if [[ $platform =~ "windows" ]]; then
                   exe=".exe"
               fi
-              pkgname=helix-$GITHUB_REF_NAME-$platform
+              pkgname=decard-$GITHUB_REF_NAME-$platform
               mkdir -p $pkgname
-              cp $source/LICENSE $source/README.md $pkgname
-              mkdir $pkgname/contrib
-              cp -r $source/contrib/completion $pkgname/contrib
-              mv bins-$platform/runtime $pkgname/
-              mv bins-$platform/hx$exe $pkgname
-              chmod +x $pkgname/hx$exe
+              mv bins-$platform/decard$exe $pkgname
+              chmod +x $pkgname/decard$exe
 
               if [ "$exe" = "" ]; then
                   tar cJf dist/$pkgname.tar.xz $pkgname
