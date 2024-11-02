@@ -139,6 +139,7 @@ jobs:
         run: |
           set -ex
 
+          source="$(pwd)"
           cd "$(mktemp -d)"
           mv $source/bins-* .
           mkdir dist
