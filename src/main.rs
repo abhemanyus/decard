@@ -1,3 +1,4 @@
+use std::env::args;
 use std::io::Write;
 use std::panic::catch_unwind;
 use std::{
@@ -13,7 +14,8 @@ use ical::{
     VcardParser,
 };
 fn main() -> Result<(), Box<dyn Error>> {
-    let file = File::open("./contacts.vcf")?;
+    let args: Vec<_> = args().collect();
+    let file = File::open(&args[1])?;
     let reader = BufReader::new(file);
     let cards = VcardParser::new(reader);
     let mut named_cards: HashMap<String, VcardContact> = HashMap::new();
@@ -23,15 +25,15 @@ fn main() -> Result<(), Box<dyn Error>> {
         let mut card = match card {
             Ok(card) => card,
             Err(err) => {
-                println!("unable to read card: {}", count);
+                println!("unable to read card {count}");
                 println!("{err:?}");
                 continue;
             }
         };
-        let name = match card.get_property("FN").unwrap().value.clone() {
+        let name = match card.get_property("FN").and_then(|p| p.value.clone()) {
             Some(name) => name,
             None => {
-                println!("No name for {count} {card:?}");
+                println!("No name for {count}");
                 continue;
             }
         };
@@ -57,10 +59,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
     }
+
     println!("Scanned entries: {}", count);
     println!("Unique entries: {}", named_cards.len());
 
-    let file = File::create("deduped.vcf")?;
+    let file = File::create(&args[2])?;
     let mut out = BufWriter::new(file);
     for card in named_cards.into_values() {
         let res = catch_unwind(|| card.generate());
