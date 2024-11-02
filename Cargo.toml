@@ -1,0 +1,7 @@
+[package]
+name = "decard"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ical = { version = "0.11.0", features = ["generator", "vcard"], default-features = false }
